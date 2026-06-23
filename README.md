@@ -2,7 +2,7 @@
 
 > **AI-powered migration** of Cypress E2E tests to Tricentis Tosca format with full Cucumber/Gherkin support.
 
-## 📋 Project Overview
+## Project Overview
 
 This repository demonstrates an **automated Cypress-to-Tosca migration** for the Centene homepage test suite. It includes:
 
@@ -14,7 +14,7 @@ This repository demonstrates an **automated Cypress-to-Tosca migration** for the
 
 ---
 
-## 🎯 Use Case
+## Use Case
 
 **Target Application:** [Centene Corporation Homepage](https://www.centene.com)  
 **Test Scope:** Navigation, hero content, featured stories, careers, investor relations, footer, accessibility  
@@ -22,7 +22,7 @@ This repository demonstrates an **automated Cypress-to-Tosca migration** for the
 
 ---
 
-## 🗂️ Repository Structure
+## Repository Structure
 
 ```
 ├── cypress/
@@ -36,12 +36,13 @@ This repository demonstrates an **automated Cypress-to-Tosca migration** for the
 │   └── support/
 │       ├── commands.ts                   # 6 custom Cypress commands
 │       └── e2e.ts                        # Global configuration
-├── tosca-output/
+├── tosca-output/                         # All migration artifacts (agent-generated)
 │   ├── Modules.xml                       # 1 Tosca Module with 32 attributes
 │   ├── ActionWords.xml                   # 6 Tosca ActionWords
 │   ├── TestCases-spec.xml                # 29 TestCases from .cy.ts file
 │   ├── TestCases-feature.xml             # 15 TestCases from .feature file
-│   └── migration-report.md               # Detailed migration analysis + manual items
+│   ├── migration-report.md               # Detailed migration analysis + manual items
+│   └── tosca-migration-workbook.html     # Interactive mapping workbook (HTML)
 ├── docs/
 │   ├── cypress-migration-standards.md    # Best practices for migration accuracy
 │   ├── agent-flow-diagram.html           # Visual workflow of the AI agent
@@ -54,7 +55,7 @@ This repository demonstrates an **automated Cypress-to-Tosca migration** for the
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -91,7 +92,7 @@ npm run cy:run:feature
 
 ---
 
-## 🤖 AI Migration Agent
+## AI Migration Agent
 
 ### What It Does
 
@@ -100,6 +101,7 @@ The **Cypress → Tosca Migrator** agent analyzes Cypress source files and gener
 1. **Modules** — POM getters → `ModuleAttribute` definitions (XPath, CSS, TestID techniques)
 2. **ActionWords** — Custom commands → reusable Tosca subroutines
 3. **TestCases** — `it()` blocks and Gherkin scenarios → Tosca TestSteps
+4. **Migration Workbook** — Interactive HTML with full Cypress→Tosca mapping, confidence levels, and manual items
 
 ### Key Features
 
@@ -109,6 +111,7 @@ The **Cypress → Tosca Migrator** agent analyzes Cypress source files and gener
 - ✅ **Gherkin support**: `Scenario Outline` expansion + `Background` step inlining
 - ✅ **API mock detection**: Flags `cy.intercept()` stubs as manual migration items
 - ✅ **Conditional logic detection**: Flags `if/else` branches requiring Tosca Script
+- ✅ **Migration workbook**: Filterable, sortable HTML workbook with confidence indicators
 
 ### Architecture
 
@@ -116,9 +119,59 @@ See [docs/agent-flow-diagram.html](docs/agent-flow-diagram.html) for a visual wo
 
 ---
 
-## 📦 Migration Output
+## Usage / Recommendation
 
-All generated Tosca XML files are in [`tosca-output/`](tosca-output/):
+For a client-facing Cypress-to-Tosca migration assessment, the recommended approach is to use Agent generated artifacts as migration accelerators rather than attempting a direct import into Tosca.
+
+### Recommended Approach
+
+#### 1. Use Agent to Generate Migration Artifacts
+
+Leverage Agent to analyze the Cypress codebase and generate:
+
+* Module Inventory
+* Test Case Inventory
+* Migration Report
+* Control and Selector Mapping Documentation
+
+These artifacts provide a comprehensive blueprint of the existing automation landscape and significantly reduce the initial analysis effort.
+
+#### 2. Create Production-Quality Tosca Modules
+
+Use Tosca XScan to create and validate production-ready modules directly against the target application. This ensures that module identification is accurate, maintainable, and aligned with Tosca best practices.
+
+#### 3. Generate Tosca Test Cases
+
+Use the generated design sheets, workbooks, and mapping documents to create Tosca TestCases. Agent generated test inventories can be used as a reference to accelerate the conversion process.
+
+#### 4. Build and Validate the Final Automation
+
+Develop the final Tosca automation using the scanned modules and generated test case mappings. Perform validation and optimization to ensure the migrated solution meets enterprise quality standards.
+
+### Benefits
+
+This approach provides:
+
+* High-confidence Tosca modules
+* Maintainable and scalable Tosca assets
+* Faster migration and onboarding effort
+* Improved traceability from Cypress to Tosca
+* A defensible and client-friendly migration strategy
+
+### Effort Estimation
+
+The Agent generated output is estimated to cover approximately:
+
+* **40–50% of the analysis and discovery effort**
+* **10–20% of the actual Tosca migration effort**
+
+The primary value of the Agent generated artifacts lies in providing a structured migration blueprint. The creation of production-ready Tosca assets should still be performed using Tosca XScan and standard Tosca development practices.
+
+---
+
+## Migration Output
+
+All agent-generated artifacts are in [`tosca-output/`](tosca-output/):
 
 | File | Content | Import Into |
 |------|---------|-------------|
@@ -126,12 +179,14 @@ All generated Tosca XML files are in [`tosca-output/`](tosca-output/):
 | `ActionWords.xml` | 6 ActionWords:<br>• acceptCookieBanner<br>• declineCookieBanner<br>• visitCenteneHome<br>• verifyExternalLink<br>• verifySectionVisible<br>• navigateToSection | Tosca Commander → ActionWords folder |
 | `TestCases-spec.xml` | 29 TestCases from `centene-homepage.cy.ts` | Tosca Commander → TestCases folder |
 | `TestCases-feature.xml` | 15 TestCases from `centene-homepage.feature` | Tosca Commander → TestCases folder |
+| `migration-report.md` | Full migration analysis, confidence levels, 8 manual action items | Review before Tosca import |
+| `tosca-migration-workbook.html` | Interactive workbook: 42 rows, filterable by category/action, sortable, with confidence indicators and manual item callouts | Open in browser for pre-import review |
 
 **Total:** 44 TestCases ready for execution in Tosca.
 
 ---
 
-## ⚠️ Manual Migration Items
+## Manual Migration Items
 
 The migration report identifies **8 items** requiring manual intervention:
 
@@ -144,11 +199,11 @@ The migration report identifies **8 items** requiring manual intervention:
 | 6-7 | Dynamic text-based lookups (`cy.contains(variable)`) | Substitute runtime variables with static ModuleAttribute names at design time |
 | 8 | News article count assertion (`newsArticles.should('have.length.greaterThan', 0)`) | Approximated as `Verify Exists=True`; adjust in Tosca if exact count required |
 
-📄 Full details in [tosca-output/migration-report.md](tosca-output/migration-report.md).
+Full details in [tosca-output/migration-report.md](tosca-output/migration-report.md).
 
 ---
 
-## 📖 Cypress Coding Standards
+## Cypress Coding Standards
 
 To maximize migration accuracy, follow the guidelines in [docs/cypress-migration-standards.md](docs/cypress-migration-standards.md):
 
@@ -162,7 +217,7 @@ To maximize migration accuracy, follow the guidelines in [docs/cypress-migration
 
 ---
 
-## 🔍 Test Coverage
+## Test Coverage
 
 ### Source: `centene-homepage.cy.ts` (29 test cases)
 
@@ -195,7 +250,7 @@ To maximize migration accuracy, follow the guidelines in [docs/cypress-migration
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Component | Technology | Version |
 |-----------|-----------|---------|
@@ -208,7 +263,7 @@ To maximize migration accuracy, follow the guidelines in [docs/cypress-migration
 
 ---
 
-## 📝 Development Commands
+## Development Commands
 
 ```bash
 # Run TypeScript compiler (check types)
@@ -229,7 +284,7 @@ npm run cy:run:feature
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 If you discover additional migration patterns or encounter edge cases:
 
@@ -239,29 +294,17 @@ If you discover additional migration patterns or encounter edge cases:
 
 ---
 
-## 📄 License
+## License
 
 This project is **private** and intended for internal demonstration of AI-powered Cypress → Tosca migration capabilities.
 
 ---
 
-## 📞 Contact
+## Contact
 
 For questions about the migration process or Tosca import issues, refer to:
 
+- Migration workbook: [`tosca-output/tosca-migration-workbook.html`](tosca-output/tosca-migration-workbook.html)
 - Migration report: [`tosca-output/migration-report.md`](tosca-output/migration-report.md)
 - Coding standards: [`docs/cypress-migration-standards.md`](docs/cypress-migration-standards.md)
 - Agent architecture: [`docs/agent-flow-diagram.html`](docs/agent-flow-diagram.html)
-
----
-
-## ✨ Highlights
-
-- **44 TestCases** automatically migrated from Cypress to Tosca
-- **32 stable element locators** in the Page Object Model
-- **6 reusable ActionWords** for common operations
-- **Cucumber/Gherkin support** with Scenario Outline expansion
-- **Detailed migration report** with 8 documented manual action items
-- **Standards documentation** to improve future migration accuracy
-
-**Ready for import into Tosca Commander.**

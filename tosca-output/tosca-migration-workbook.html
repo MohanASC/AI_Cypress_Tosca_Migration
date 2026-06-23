@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tosca Migration Workbook — Centene Homepage</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6fb;
+      color: #1a1a2e;
+      padding: 32px 24px 60px;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0d3b66;
+      letter-spacing: 0.5px;
+    }
+    header p {
+      font-size: 14px;
+      color: #555;
+      margin-top: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: #0d3b66;
+      color: #fff;
+      border-radius: 12px;
+      padding: 3px 14px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .badge-green {
+      background: #27ae60;
+      margin-left: 6px;
+    }
+
+    /* ── Stats Strip ─────────────────────────────────────────── */
+    .stats-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #dde3f0;
+      border-radius: 12px;
+      padding: 14px 24px;
+      text-align: center;
+      min-width: 130px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .stat-card .num {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0d3b66;
+      line-height: 1;
+    }
+    .stat-card .label {
+      font-size: 11px;
+      color: #777;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Tabs ────────────────────────────────────────────────── */
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 8px 18px;
+      border: 1px solid #ccd4e8;
+      background: #e8edf7;
+      border-radius: 8px 8px 0 0;
+      font-size: 13px;
+      cursor: pointer;
+      color: #444;
+      font-weight: 500;
+      transition: background 0.15s;
+      border-bottom: none;
+    }
+    .tab-btn:hover { background: #d2daf0; }
+    .tab-btn.active {
+      background: #fff;
+      color: #0d3b66;
+      font-weight: 700;
+      border-color: #b0bcd8;
+    }
+
+    /* ── Card/Panel ──────────────────────────────────────────── */
+    .card {
+      background: #fff;
+      border: 1px solid #b0bcd8;
+      border-radius: 0 14px 14px 14px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 32px;
+    }
+
+    /* ── Toolbar ─────────────────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .toolbar input[type="search"] {
+      padding: 7px 13px;
+      border: 1px solid #ccd4e8;
+      border-radius: 7px;
+      font-size: 13px;
+      width: 260px;
+      outline: none;
+    }
+    .toolbar input[type="search"]:focus { border-color: #2e86de; }
+    .toolbar select {
+      padding: 7px 11px;
+      border: 1px solid #ccd4e8;
+      border-radius: 7px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+    .toolbar select:focus { border-color: #2e86de; }
+    .row-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: #888;
+    }
+
+    /* ── Table ───────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead tr {
+      background: #0d3b66;
+      color: #fff;
+    }
+    thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { background: #1a5494; }
+    thead th .sort-arrow { margin-left: 4px; opacity: 0.5; font-size: 10px; }
+    thead th.sorted .sort-arrow { opacity: 1; }
+
+    tbody tr { border-bottom: 1px solid #e8ecf5; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f0f4ff; }
+    tbody tr.hidden { display: none; }
+
+    td { padding: 9px 12px; vertical-align: middle; }
+    td code {
+      background: #eef2ff;
+      color: #2c3e8e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+    }
+
+    /* ── Category badge ──────────────────────────────────────── */
+    .cat {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .cat-cookie    { background: #fde8c8; color: #884400; }
+    .cat-nav       { background: #d6eaff; color: #0a4a8a; }
+    .cat-hero      { background: #e0f4e8; color: #1a6a35; }
+    .cat-news      { background: #f3e0ff; color: #6a1a9a; }
+    .cat-members   { background: #fff0d6; color: #8a5500; }
+    .cat-careers   { background: #ffe0e0; color: #8a0000; }
+    .cat-investors { background: #e0fff4; color: #006a45; }
+    .cat-social    { background: #e0eeff; color: #0040aa; }
+    .cat-footer    { background: #f0f0f0; color: #444; }
+    .cat-command   { background: #ffe8f4; color: #8a0055; }
+    .cat-method    { background: #e8f8ff; color: #005a8a; }
+
+    /* ── Action badge ────────────────────────────────────────── */
+    .action {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .action-click    { background: #d6eaff; color: #0a4a8a; }
+    .action-verify   { background: #d6f5e3; color: #0a5a2a; }
+    .action-navigate { background: #fff3d6; color: #7a4a00; }
+    .action-wait     { background: #fce4ff; color: #7a0090; }
+    .action-manual   { background: #ffe0d6; color: #8a2000; }
+
+    /* ── Confidence ──────────────────────────────────────────── */
+    .conf { display: inline-flex; gap: 3px; align-items: center; }
+    .conf-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #ddd;
+    }
+    .conf-full .conf-dot { background: #27ae60; }
+    .conf-high .conf-dot:nth-child(-n+3) { background: #f39c12; }
+    .conf-med .conf-dot:nth-child(-n+2) { background: #e67e22; }
+    .conf-low .conf-dot:first-child { background: #e74c3c; }
+    .conf-manual .conf-dot { background: #e74c3c !important; }
+
+    .conf-label { font-size: 11px; margin-left: 5px; }
+    .conf-full   .conf-label { color: #27ae60; }
+    .conf-high   .conf-label { color: #f39c12; }
+    .conf-med    .conf-label { color: #e67e22; }
+    .conf-low    .conf-label { color: #e74c3c; }
+    .conf-manual .conf-label { color: #e74c3c; }
+
+    /* ── Notes ───────────────────────────────────────────────── */
+    .note { font-size: 11.5px; color: #666; }
+    .note .warn { color: #c0392b; font-weight: 600; }
+
+    /* ── Selector types ──────────────────────────────────────── */
+    .sel {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .sel-testid { background: #d6eaff; color: #0a4a8a; }
+    .sel-xpath  { background: #fff3d6; color: #7a4a00; }
+    .sel-css    { background: #e0f4e8; color: #1a6a35; }
+    .sel-id     { background: #f3e0ff; color: #6a1a9a; }
+
+    /* ── Legend ──────────────────────────────────────────────── */
+    .legend-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: #fff;
+      border: 1px solid #dde3f0;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-green  { background: #27ae60; }
+    .dot-yellow { background: #f39c12; }
+    .dot-orange { background: #e67e22; }
+    .dot-red    { background: #e74c3c; }
+
+    /* ── Tab panels ──────────────────────────────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ─────────────────────────────────────── */
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0d3b66;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #e0e8f8;
+    }
+
+    @media (max-width: 768px) {
+      .toolbar input[type="search"] { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header>
+  <h1>Tosca Migration Workbook</h1>
+  <p>Centene Homepage — Cypress → Tricentis Tosca mapping reference</p>
+  <span class="badge">Source: cypress/pages/CenteneHomePage.ts &nbsp;|&nbsp; cypress/support/commands.ts</span>
+  <span class="badge badge-green">44 TestCases migrated</span>
+</header>
+
+<!-- ── Stats Strip ────────────────────────────────────────────── -->
+<div class="stats-strip">
+  <div class="stat-card"><div class="num">32</div><div class="label">POM Getters</div></div>
+  <div class="stat-card"><div class="num">4</div><div class="label">POM Methods</div></div>
+  <div class="stat-card"><div class="num">6</div><div class="label">Custom Commands</div></div>
+  <div class="stat-card"><div class="num">42</div><div class="label">Total Rows</div></div>
+  <div class="stat-card"><div class="num">29</div><div class="label">Auto-migrated</div></div>
+  <div class="stat-card"><div class="num">8</div><div class="label">Manual Items</div></div>
+</div>
+
+<!-- ── Legend ─────────────────────────────────────────────────── -->
+<div class="legend-strip">
+  <div class="legend-item"><div class="dot dot-green"></div>Full Auto-migration — no action needed</div>
+  <div class="legend-item"><div class="dot dot-yellow"></div>Partial — review confidence before import</div>
+  <div class="legend-item"><div class="dot dot-orange"></div>Manual step required in Tosca Commander</div>
+  <div class="legend-item"><div class="dot dot-red"></div>Manual migration — cannot auto-convert</div>
+</div>
+
+<!-- ── Tabs ───────────────────────────────────────────────────── -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('all',this)">All Rows (42)</button>
+  <button class="tab-btn" onclick="switchTab('getter',this)">POM Getters (32)</button>
+  <button class="tab-btn" onclick="switchTab('method',this)">POM Methods (4)</button>
+  <button class="tab-btn" onclick="switchTab('command',this)">Custom Commands (6)</button>
+  <button class="tab-btn" onclick="switchTab('manual',this)">⚠ Manual Items</button>
+</div>
+
+<div class="card">
+  <!-- ── Toolbar ────────────────────────────────────────────── -->
+  <div class="toolbar">
+    <input type="search" id="searchBox" placeholder="Search method, module, action…" oninput="applyFilters()" />
+    <select id="catFilter" onchange="applyFilters()">
+      <option value="">All Categories</option>
+      <option>Cookie Banner</option>
+      <option>Navigation</option>
+      <option>Hero Section</option>
+      <option>Featured Stories</option>
+      <option>Serving Members</option>
+      <option>Careers</option>
+      <option>Investor Relations</option>
+      <option>Social Media</option>
+      <option>Footer</option>
+      <option>Custom Commands</option>
+      <option>POM Methods</option>
+    </select>
+    <select id="actionFilter" onchange="applyFilters()">
+      <option value="">All Actions</option>
+      <option>Click</option>
+      <option>Verify</option>
+      <option>Navigate</option>
+      <option>Wait</option>
+      <option>Manual</option>
+    </select>
+    <span class="row-count" id="rowCount"></span>
+  </div>
+
+  <!-- ── Table ──────────────────────────────────────────────── -->
+  <div class="table-wrap">
+    <table id="workbookTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Cypress File <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(1)">Cypress Method / Getter <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(2)">Selector Pattern <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(3)">Tosca Module <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(4)">Tosca Attribute / ActionWord <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(5)">Tosca Action <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(6)">Confidence <span class="sort-arrow">▲</span></th>
+          <th onclick="sortTable(7)">Category <span class="sort-arrow">▲</span></th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Cookie Banner
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Cookie Banner" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>cookieBanner</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>[class*="cookie"]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>cookieBanner</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-cookie">Cookie Banner</span></td>
+          <td class="note">Partial match — <code>class*="cookie"</code> is a wildcard CSS selector. Stable if no other cookie-class elements present.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Cookie Banner" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>cookieAcceptBtn</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//button[contains(text(),'Accept')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>cookieAcceptBtn</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-cookie">Cookie Banner</span></td>
+          <td class="note">Text-match XPath. Recommend adding <code>data-testid="cookie-accept-btn"</code> for full confidence.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Cookie Banner" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>cookieDeclineBtn</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//button[contains(text(),'Decline')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>cookieDeclineBtn</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-cookie">Cookie Banner</span></td>
+          <td class="note">Text-match XPath. Add <code>data-testid="cookie-decline-btn"</code> for full confidence.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Navigation
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Navigation" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>skipToMainContent</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//a[contains(text(),'Skip to Main Content')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>skipToMainContent</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Accessibility element — verifies presence in DOM only (may be visually hidden).</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navWhoWeAre</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),'Who We Are')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navWhoWeAre</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Scoped to <code>&lt;nav&gt;</code> — reduces false-match risk vs. body text links.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navWhyDifferent</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),"Why We're Different")]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navWhyDifferent</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Apostrophe in label — ensure XML special-char encoding on import.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navProductsServices</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),'Products &amp; Services')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navProductsServices</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Ampersand in label — XML-encoded as <code>&amp;amp;</code> in Tosca XML.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navCareers</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),'Careers')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navCareers</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Unique nav link — full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navInvestors</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),'Investors')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navInvestors</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Unique nav link — full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navNews</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),'News')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navNews</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Unique nav link — full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navContact</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//nav//a[contains(text(),'CONTACT')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>navContact</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">All-caps label in DOM — verify casing matches deployed site.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Navigation" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>logo</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>a[href="/"]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>logo</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-nav">Navigation</span></td>
+          <td class="note">Root <code>href="/"</code> — very stable across deployments.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Hero Section
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Hero Section" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>heroHeading</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//h1[contains(text(),'This is Centene')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>heroHeading</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-hero">Hero Section</span></td>
+          <td class="note">H1 text is brand-fixed — highly stable. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Hero Section" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>heroTagline</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//*[contains(text(),'Transforming the health…')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>heroTagline</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-hero">Hero Section</span></td>
+          <td class="note">Wildcard element <code>//*</code> — may match multiple nodes if tagline appears in metadata. Scope to <code>main</code> if issues arise.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Hero Section" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>whoWeAreLink</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//a[contains(text(),'Who We Are &gt;')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>whoWeAreLink</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-hero">Hero Section</span></td>
+          <td class="note">Trailing <code>&gt;</code> in text makes it unique vs nav link. Full auto-migration.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Featured Stories
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Featured Stories" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>featuredStoriesSection</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//h2[contains(text(),'Featured Stories')]/parent::*</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>featuredStoriesSection</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-news">Featured Stories</span></td>
+          <td class="note"><code>.parent()</code> traversal — generated as XPath <code>/parent::*</code>. Fragile if section DOM changes. Prefer adding <code>data-testid</code>.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Featured Stories" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>viewAllNewsLink</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//a[contains(text(),'View All News &gt;')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>viewAllNewsLink</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-news">Featured Stories</span></td>
+          <td class="note">Trailing <code>&gt;</code> makes text unique. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Featured Stories" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>newsArticles</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>[class*="news"] a, [class*="story"] a</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>newsArticles</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Medium</span></span></td>
+          <td><span class="cat cat-news">Featured Stories</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #8</span> — Multi-selector, count assertion (<code>length &gt; 0</code>) approximated as <code>Exists=True</code>. May differ when news API stub is removed.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Serving Members
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Serving Members" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>servingMembersSection</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//h2[contains(text(),'Serving our Members')]/parent::*</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>servingMembersSection</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-members">Serving Members</span></td>
+          <td class="note"><code>.parent()</code> traversal — same fragility note as <code>featuredStoriesSection</code>.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Serving Members" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>productsServicesLink</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//a[contains(text(),'Products &amp; Services &gt;')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>productsServicesLink</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-members">Serving Members</span></td>
+          <td class="note">Trailing <code>&gt;</code> makes it unique vs nav link. Full auto-migration.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Careers
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Careers" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>careersSection</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//h2[contains(text(),'Careers')]/parent::*</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>careersSection</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-careers">Careers</span></td>
+          <td class="note"><code>.parent()</code> traversal. Add <code>data-testid="careers-section"</code> for full confidence.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Careers" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>joinOurTeamLink</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//a[contains(text(),'Join our Team')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>joinOurTeamLink</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-careers">Careers</span></td>
+          <td class="note">External link to <code>jobs.centene.com/us/en</code>. Verify <code>target="_blank"</code> in Tosca Verify Attribute step.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Investor Relations
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Investor Relations" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>investorSection</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//h2[contains(text(),'Centene Investor Relations')]/parent::*</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>investorSection</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-investors">Investor Relations</span></td>
+          <td class="note"><code>.parent()</code> traversal. Add <code>data-testid="investor-section"</code> for full confidence.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Investor Relations" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>visitInvestorSiteLink</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//a[contains(text(),'Visit Investor Site')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>visitInvestorSiteLink</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-investors">Investor Relations</span></td>
+          <td class="note">External link to <code>investors.centene.com</code>. Verify <code>href</code> contains <code>investors.centene.com</code>.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Social Media
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Social Media" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>linkedInLink</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>a[href*="linkedin.com/company/centene"]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>linkedInLink</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-social">Social Media</span></td>
+          <td class="note">Attribute-based CSS selector — very stable. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Social Media" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>facebookLink</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>a[href*="facebook.com/CenteneCorporation"]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>facebookLink</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-social">Social Media</span></td>
+          <td class="note">Attribute-based CSS selector — full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Social Media" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>twitterLink</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>a[href*="x.com/Centene"]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>twitterLink</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-social">Social Media</span></td>
+          <td class="note">Rebranded Twitter domain (<code>x.com</code>) — confirm current URL on live site.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Social Media" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>youtubeLink</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>a[href*="youtube.com/user/CenteneCorp"]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>youtubeLink</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-social">Social Media</span></td>
+          <td class="note">Attribute-based CSS selector — full auto-migration.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM GETTERS — Footer
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="getter" data-cat="Footer" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>footerPrivacyPolicy</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//footer//a[contains(text(),'PRIVACY POLICY')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>footerPrivacyPolicy</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-footer">Footer</span></td>
+          <td class="note">Scoped to <code>&lt;footer&gt;</code> — stable. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Footer" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>footerTerms</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//footer//a[contains(text(),'TERMS &amp; CONDITIONS')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>footerTerms</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-footer">Footer</span></td>
+          <td class="note">Scoped to <code>&lt;footer&gt;</code>. Ampersand XML-encoded. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Footer" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>footerAccessibility</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//footer//a[contains(text(),'ACCESSIBILITY')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>footerAccessibility</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-footer">Footer</span></td>
+          <td class="note">Scoped to <code>&lt;footer&gt;</code>. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="getter" data-cat="Footer" data-action="Verify">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>footerCopyright</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//*[contains(text(),'© Copyright 2026 Centene')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>footerCopyright</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-high"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">High</span></span></td>
+          <td><span class="cat cat-footer">Footer</span></td>
+          <td class="note">Year-specific text (<code>2026</code>) — update annually or scope to partial match.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             POM METHODS (4)
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="method" data-cat="POM Methods" data-action="Navigate">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>visit()</code></td>
+          <td><span class="sel sel-css">URL</span> <code>https://www.centene.com/</code></td>
+          <td>CenteneHomePage</td>
+          <td><em>TBox Navigate</em></td>
+          <td><span class="action action-navigate">Navigate</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-method">POM Methods</span></td>
+          <td class="note">Maps to <code>TBox Navigate</code> with fixed URL. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="method" data-cat="POM Methods" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>acceptCookies()</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//button[contains(text(),'Accept')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>cookieAcceptBtn</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-method">POM Methods</span></td>
+          <td class="note">Delegates to <code>cookieAcceptBtn</code> getter. Maps to <code>TBox Click</code> in Tosca.</td>
+        </tr>
+
+        <tr data-type="method" data-cat="POM Methods" data-action="Click">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>declineCookies()</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>//button[contains(text(),'Decline')]</code></td>
+          <td>CenteneHomePage</td>
+          <td><code>cookieDeclineBtn</code></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-method">POM Methods</span></td>
+          <td class="note">Delegates to <code>cookieDeclineBtn</code> getter. Maps to <code>TBox Click</code> in Tosca.</td>
+        </tr>
+
+        <tr data-type="method" data-cat="POM Methods" data-action="Manual">
+          <td><code>CenteneHomePage.ts</code></td>
+          <td><code>navigateTo(section)</code></td>
+          <td><span class="sel sel-xpath">XPath</span> Runtime key lookup via <code>linkMap[section]</code></td>
+          <td>CenteneHomePage</td>
+          <td><em>Decomposed — see notes</em></td>
+          <td><span class="action action-manual">Manual</span></td>
+          <td><span class="conf conf-manual"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Manual</span></span></td>
+          <td><span class="cat cat-method">POM Methods</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #5</span> — Dynamic dispatch. Decomposed to individual nav attributes per TestCase: <code>navWhoWeAre</code>, <code>navWhyDifferent</code>, <code>navProductsServices</code>, <code>navCareers</code>, <code>navInvestors</code>, <code>navNews</code>, <code>navContact</code>.</td>
+        </tr>
+
+        <!-- ═══════════════════════════════════════════════════════
+             CUSTOM COMMANDS (6)
+        ════════════════════════════════════════════════════════ -->
+        <tr data-type="command" data-cat="Custom Commands" data-action="Click">
+          <td><code>commands.ts</code></td>
+          <td><code>cy.acceptCookieBanner()</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>[class*="cookie"]</code> → <span class="sel sel-xpath">XPath</span> <code>//button[text(),'Accept']</code></td>
+          <td>ActionWords</td>
+          <td><em>acceptCookieBanner</em></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
+          <td><span class="cat cat-command">Custom Commands</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #3</span> — Conditional <code>if</code> guard dropped. Implemented as unconditional click. Use Tosca Optional Step or guarantee banner precondition.</td>
+        </tr>
+
+        <tr data-type="command" data-cat="Custom Commands" data-action="Click">
+          <td><code>commands.ts</code></td>
+          <td><code>cy.declineCookieBanner()</code></td>
+          <td><span class="sel sel-css">CSS</span> <code>[class*="cookie"]</code> → <span class="sel sel-xpath">XPath</span> <code>//button[text(),'Decline']</code></td>
+          <td>ActionWords</td>
+          <td><em>declineCookieBanner</em></td>
+          <td><span class="action action-click">Click</span></td>
+          <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
+          <td><span class="cat cat-command">Custom Commands</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #4</span> — Same conditional guard issue as <code>acceptCookieBanner</code>. Implemented as unconditional click.</td>
+        </tr>
+
+        <tr data-type="command" data-cat="Custom Commands" data-action="Manual">
+          <td><code>commands.ts</code></td>
+          <td><code>cy.navigateToSection(sectionName)</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>cy.contains('nav a', sectionName)</code> — runtime variable</td>
+          <td>ActionWords</td>
+          <td><em>navigateToSection</em> <code>{sectionName}</code></td>
+          <td><span class="action action-manual">Manual</span></td>
+          <td><span class="conf conf-manual"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Manual</span></span></td>
+          <td><span class="cat cat-command">Custom Commands</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #7</span> — <code>sectionName</code> parameter must be substituted with actual ModuleAttribute at design time. Map: <em>Who We Are → navWhoWeAre, Careers → navCareers</em>, etc.</td>
+        </tr>
+
+        <tr data-type="command" data-cat="Custom Commands" data-action="Navigate">
+          <td><code>commands.ts</code></td>
+          <td><code>cy.visitCenteneHome()</code></td>
+          <td><span class="sel sel-css">URL</span> <code>https://www.centene.com/</code></td>
+          <td>ActionWords</td>
+          <td><em>visitCenteneHome</em></td>
+          <td><span class="action action-navigate">Navigate</span></td>
+          <td><span class="conf conf-full"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Full</span></span></td>
+          <td><span class="cat cat-command">Custom Commands</span></td>
+          <td class="note">Chains: <code>TBox Navigate</code> + <code>acceptCookieBanner</code> ActionWord call. Full auto-migration.</td>
+        </tr>
+
+        <tr data-type="command" data-cat="Custom Commands" data-action="Verify">
+          <td><code>commands.ts</code></td>
+          <td><code>cy.verifyExternalLink(linkText, expectedUrl)</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>cy.contains('a', linkText)</code> — runtime variable</td>
+          <td>ActionWords</td>
+          <td><em>verifyExternalLink</em> <code>{linkElement}</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
+          <td><span class="cat cat-command">Custom Commands</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #6</span> — <code>linkText</code> parameter must be substituted with a static ModuleAttribute (e.g., <code>joinOurTeamLink</code>, <code>visitInvestorSiteLink</code>) at design time. Verify <code>href</code> + <code>target="_blank"</code> attributes.</td>
+        </tr>
+
+        <tr data-type="command" data-cat="Custom Commands" data-action="Verify">
+          <td><code>commands.ts</code></td>
+          <td><code>cy.verifySectionVisible(sectionHeading)</code></td>
+          <td><span class="sel sel-xpath">XPath</span> <code>cy.contains('h2', sectionHeading)</code> — runtime variable</td>
+          <td>ActionWords</td>
+          <td><em>verifySectionVisible</em> <code>{sectionElement}</code></td>
+          <td><span class="action action-verify">Verify</span></td>
+          <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
+          <td><span class="cat cat-command">Custom Commands</span></td>
+          <td class="note"><span class="warn">⚠ Manual Item #7</span> — <code>sectionHeading</code> must be substituted: <em>Featured Stories → featuredStoriesSection, Serving our Members → servingMembersSection</em>, etc.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:12px;font-size:12px;color:#999;text-align:right;">
+    Generated: 2026-06-24 &nbsp;|&nbsp; Project: Centene Homepage Cypress → Tosca Migration
+  </div>
+</div>
+
+<!-- ── Script ──────────────────────────────────────────────────── -->
+<script>
+  // ── Tab switching ────────────────────────────────────────────
+  let activeTab = 'all';
+
+  function switchTab(tab, btn) {
+    activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  // ── Filter + search ──────────────────────────────────────────
+  function applyFilters() {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    const cat    = document.getElementById('catFilter').value.toLowerCase();
+    const action = document.getElementById('actionFilter').value.toLowerCase();
+    const rows   = document.querySelectorAll('#tableBody tr');
+    let visible  = 0;
+
+    rows.forEach(row => {
+      const type   = row.dataset.type   || '';
+      const rowCat = row.dataset.cat    || '';
+      const rowAct = row.dataset.action || '';
+      const text   = row.textContent.toLowerCase();
+
+      const tabOk    = activeTab === 'all'
+                    || activeTab === type
+                    || (activeTab === 'manual' && rowAct === 'manual');
+      const searchOk = !search || text.includes(search);
+      const catOk    = !cat    || rowCat.toLowerCase().includes(cat);
+      const actionOk = !action || rowAct.toLowerCase() === action.toLowerCase();
+
+      if (tabOk && searchOk && catOk && actionOk) {
+        row.classList.remove('hidden');
+        visible++;
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('rowCount').textContent = `${visible} row${visible !== 1 ? 's' : ''} shown`;
+  }
+
+  // ── Table sort ───────────────────────────────────────────────
+  let sortCol = -1, sortAsc = true;
+
+  function sortTable(col) {
+    const tbody = document.getElementById('tableBody');
+    const rows  = Array.from(tbody.querySelectorAll('tr'));
+    const ths   = document.querySelectorAll('thead th');
+
+    if (sortCol === col) { sortAsc = !sortAsc; }
+    else { sortCol = col; sortAsc = true; }
+
+    ths.forEach((th, i) => {
+      th.classList.remove('sorted');
+      const arrow = th.querySelector('.sort-arrow');
+      if (arrow) arrow.textContent = '▲';
+    });
+    ths[col].classList.add('sorted');
+    const arrow = ths[col].querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = sortAsc ? '▲' : '▼';
+
+    rows.sort((a, b) => {
+      const aText = a.cells[col] ? a.cells[col].textContent.trim() : '';
+      const bText = b.cells[col] ? b.cells[col].textContent.trim() : '';
+      return sortAsc
+        ? aText.localeCompare(bText)
+        : bText.localeCompare(aText);
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+    applyFilters();
+  }
+
+  // ── Init ─────────────────────────────────────────────────────
+  applyFilters();
+</script>
+</body>
+</html>
