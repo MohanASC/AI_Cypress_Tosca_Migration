@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cypress → Tosca Migrator — Agent Flow</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6fb;
+      color: #1a1a2e;
+      padding: 32px 24px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0d3b66;
+      letter-spacing: 0.5px;
+    }
+    header p {
+      font-size: 14px;
+      color: #555;
+      margin-top: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: #0d3b66;
+      color: #fff;
+      border-radius: 12px;
+      padding: 3px 12px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    /* ── Legend ────────────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #dde3f0;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+    .dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-blue   { background: #2e86de; }
+    .dot-green  { background: #27ae60; }
+    .dot-orange { background: #e67e22; }
+    .dot-red    { background: #c0392b; }
+    .dot-purple { background: #8e44ad; }
+
+    /* ── Diagram container ──────────────────────────────────────── */
+    .diagram-card {
+      background: #fff;
+      border: 1px solid #dde3f0;
+      border-radius: 14px;
+      padding: 32px 24px;
+      overflow-x: auto;
+      margin-bottom: 36px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .mermaid { min-width: 900px; }
+
+    /* ── Steps table ────────────────────────────────────────────── */
+    .steps-section h2 {
+      font-size: 18px;
+      color: #0d3b66;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #2e86de;
+      padding-bottom: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      background: #0d3b66;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #e8ecf4;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f8f9fd; }
+    tr:hover td { background: #edf2ff; }
+    .step-num {
+      font-weight: 700;
+      color: #2e86de;
+      white-space: nowrap;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      margin: 1px 2px;
+    }
+    .tag-auto    { background: #d4efdf; color: #1a7a3c; }
+    .tag-manual  { background: #fde8d8; color: #a04000; }
+    .tag-flag    { background: #fef9c3; color: #7d6608; }
+
+    /* ── Print button ────────────────────────────────────────────── */
+    .toolbar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: #0d3b66;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 0 6px;
+    }
+    .btn:hover { background: #2e86de; }
+    @media print {
+      .toolbar { display: none; }
+      body { background: #fff; padding: 16px; }
+      /* Preserve all fill/stroke colours exactly as shown on screen */
+      * { -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important; }
+      .diagram-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        overflow: visible;
+        page-break-inside: avoid;
+      }
+      /* Let the SVG scale to fit the page width */
+      .mermaid { min-width: unset !important; }
+      .mermaid svg {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto  !important;
+        font-family: 'Segoe UI', Arial, sans-serif !important;
+      }
+      .steps-section { page-break-before: always; }
+      .flow-card, .flow-diamond { page-break-inside: avoid; }
+      .flow-diagram { max-width: 100%; }
+    }
+
+    /* ── Card-based flow diagram ──────────────────────────────── */
+    .flow-diagram {
+      display: flex; flex-direction: column; align-items: center;
+      max-width: 700px; margin: 0 auto; padding: 4px 0 12px;
+    }
+    .flow-pill {
+      background: #0d3b66; color: #fff;
+      border-radius: 50px; padding: 10px 36px;
+      font-weight: 700; font-size: 14px; letter-spacing: .3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .flow-pill-end { background: #27ae60; }
+    .flow-arr {
+      display: flex; flex-direction: column; align-items: center; height: 34px;
+    }
+    .flow-arr .arr-line { width: 2px; flex: 1; background: #99aabb; }
+    .flow-arr .arr-head {
+      width: 0; height: 0;
+      border-left: 7px solid transparent; border-right: 7px solid transparent;
+      border-top: 10px solid #99aabb;
+    }
+    .flow-card {
+      width: 100%; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    }
+    .fc-head {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 20px; color: #fff; font-weight: 700; font-size: 15px;
+    }
+    .fc-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; min-width: 28px;
+      border-radius: 50%; background: rgba(255,255,255,0.28);
+      font-weight: 800; font-size: 13px;
+    }
+    .fc-body {
+      background: #fff; padding: 14px 22px 16px;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-top: none; border-radius: 0 0 12px 12px;
+    }
+    .fc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+    .fc-body ul { list-style: disc; padding-left: 18px; margin: 0; }
+    .fc-body li { font-size: 13.5px; color: #333; padding: 3px 0; }
+    .card-purple .fc-head { background: #8e44ad; }
+    .card-blue   .fc-head { background: #2980b9; }
+    .card-orange .fc-head { background: #e67e22; }
+    .card-red    .fc-head { background: #c0392b; }
+    .card-green  .fc-head { background: #27ae60; }
+    /* Decision diamond */
+    .flow-diamond {
+      position: relative; margin: 12px auto;
+      width: 120px; height: 120px;
+    }
+    .flow-diamond-inner {
+      width: 100%; height: 100%;
+      background: #e67e22; transform: rotate(45deg);
+      border-radius: 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .flow-diamond-text {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 13px;
+      text-align: center; line-height: 1.5;
+    }
+    /* YES / NO branch */
+    .flow-branch {
+      width: 100%; display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      align-items: start; gap: 0;
+    }
+    .branch-col { display: flex; flex-direction: column; align-items: center; }
+    .branch-tag {
+      font-size: 11.5px; font-weight: 700; padding: 4px 10px;
+      border-radius: 4px; margin-bottom: 4px;
+    }
+    .tag-yes { background: #fde8e8; color: #c0392b; }
+    .tag-no  { background: #e8f8ee; color: #27ae60; }
+    .branch-merge {
+      width: 100%; height: 22px; position: relative; margin: 0;
+    }
+    .branch-merge::before {
+      content: ''; position: absolute;
+      left: 20%; right: 20%; top: 0; height: 2px; background: #99aabb;
+    }
+    .branch-merge::after {
+      content: ''; position: absolute;
+      left: 50%; top: 0; transform: translateX(-50%);
+      border-left: 7px solid transparent; border-right: 7px solid transparent;
+      border-top: 10px solid #99aabb;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Cypress → Tosca Migrator</h1>
+  <p>Agent workflow — from Cypress source files to importable Tosca XML</p>
+  <span class="badge">Accuracy: up to 88% automated coverage</span>
+</header>
+
+<div class="toolbar">
+  <button class="btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  <button class="btn" onclick="saveHTML()">&#11015; Save as HTML</button>
+</div>
+
+<!-- ── Legend ─────────────────────────────────────────────── -->
+<div class="legend">
+  <div class="legend-item"><div class="dot dot-blue"></div>Blue &mdash; AI-Driven (Automated)</div>
+  <div class="legend-item"><div class="dot dot-green"></div>Green &mdash; Output artifacts</div>
+  <div class="legend-item"><div class="dot dot-orange"></div>Orange &mdash; User decision required</div>
+  <div class="legend-item"><div class="dot dot-red"></div>Red &mdash; Manual migration item</div>
+  <div class="legend-item"><div class="dot dot-purple"></div>Purple &mdash; Platform selection</div>
+</div>
+
+<!-- ── Card flow diagram ─────────────────────────────────────── -->
+<div class="diagram-card">
+<div class="flow-diagram">
+
+  <!-- Start -->
+  <div class="flow-pill">&#9654; Start Agent</div>
+  <div class="flow-arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+  <!-- Step 0 -->
+  <div class="flow-card card-purple">
+    <div class="fc-head"><span class="fc-badge">0</span>Platform &amp; Config</div>
+    <div class="fc-body">
+      <div class="fc-grid">
+        <ul><li>Web &#8212; TBox Web</li><li>iOS / Android &#8212; TBox Mobile</li></ul>
+        <ul><li>SAP / WinForms &#8212; SapPath</li><li>Salesforce &#8212; TBox Salesforce</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="flow-arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+  <!-- Step 1 -->
+  <div class="flow-card card-blue">
+    <div class="fc-head"><span class="fc-badge">1</span>Discover &amp; Scan</div>
+    <div class="fc-body">
+      <div class="fc-grid">
+        <ul><li>Spec Files (.cy.ts)</li><li>POM Classes (.ts)</li></ul>
+        <ul><li>Feature Files (.feature)</li><li>Fixtures (.json)</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="flow-arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+  <!-- Step 2 -->
+  <div class="flow-card card-blue">
+    <div class="fc-head"><span class="fc-badge">2</span>Analyze Patterns</div>
+    <div class="fc-body">
+      <div class="fc-grid">
+        <ul><li>it() blocks &#8594; TestCase</li><li>POM getters &#8594; ModuleAttributes</li></ul>
+        <ul><li>Commands.add &#8594; ActionWord</li><li>cy.fixture &#8594; TestConfiguration</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="flow-arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+  <!-- Step 3 -->
+  <div class="flow-card card-blue">
+    <div class="fc-head"><span class="fc-badge">3</span>Detect Gaps</div>
+    <div class="fc-body">
+      <div class="fc-grid">
+        <ul><li>cy.intercept / cy.stub</li><li>if/else conditionals</li></ul>
+        <ul><li>Dynamic selectors</li><li>Count assertions</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decision diamond -->
+  <div class="flow-diamond">
+    <div class="flow-diamond-inner"></div>
+    <div class="flow-diamond-text">Ambiguities<br>Found?</div>
+  </div>
+
+  <!-- YES / NO branches -->
+  <div class="flow-branch">
+    <div class="branch-col">
+      <span class="branch-tag tag-yes">YES &#8212; User Decides</span>
+      <div class="flow-arr" style="height:20px"><div class="arr-line"></div><div class="arr-head"></div></div>
+      <div class="flow-card card-red" style="width:100%">
+        <div class="fc-head">Manual Migration Items</div>
+        <div class="fc-body">
+          <ul><li>cy.intercept / cy.stub</li><li>if/else guards</li><li>Dynamic Selectors</li></ul>
+        </div>
+      </div>
+    </div>
+    <div></div>
+    <div class="branch-col">
+      <span class="branch-tag tag-no">NO &#8212; Continue</span>
+      <div class="flow-arr" style="height:86px"><div class="arr-line"></div><div class="arr-head"></div></div>
+    </div>
+  </div>
+  <div class="branch-merge"></div>
+
+  <!-- Step 4 -->
+  <div class="flow-card card-blue">
+    <div class="fc-head"><span class="fc-badge">4</span>Generate Tosca Artifacts</div>
+    <div class="fc-body">
+      <div class="fc-grid">
+        <ul><li>Modules.xml</li><li>ActionWords.xml</li></ul>
+        <ul><li>TestCases.xml</li><li>Configurations.xml</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="flow-arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+  <!-- Step 5 -->
+  <div class="flow-card card-orange">
+    <div class="fc-head"><span class="fc-badge">5</span>Review &amp; Iterate</div>
+    <div class="fc-body">
+      <div class="fc-grid">
+        <ul><li>Spot Validation</li><li>Re-run Generation</li></ul>
+        <ul><li>Refine Mapping</li><li>Accuracy Rating</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="flow-arr"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+  <!-- Migration Ready -->
+  <div class="flow-card card-green">
+    <div class="fc-head"><span class="fc-badge">&#10003;</span>Migration Ready</div>
+    <div class="fc-body">
+      <ul><li>Import XML into Tosca Commander</li><li>Migration Report with Accuracy Rating</li><li>Manual Items list for follow-up</li></ul>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ── Step-by-step table ──────────────────────────────────── -->
+<div class="steps-section">
+  <h2>Step-by-Step Reference</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Step</th>
+        <th>Name</th>
+        <th>What Happens</th>
+        <th>Who Acts</th>
+        <th>Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="step-num">Step 0</td>
+        <td>Platform &amp; Config</td>
+        <td>Agent asks target platform (Web / Mobile / SAP / Salesforce / WinForms) and Tosca version. Sets correct TBox engine and selector technique priority.</td>
+        <td><span class="tag tag-manual">User</span></td>
+        <td>Engine context locked in</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 1</td>
+        <td>Discover &amp; Inventory</td>
+        <td>Reads all .cy.ts spec files, POM .ts classes, commands.ts, .feature files, and fixture files. Builds a complete inventory table for user confirmation.</td>
+        <td><span class="tag tag-auto">Agent</span></td>
+        <td>Inventory list</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 2</td>
+        <td>Pattern Analysis</td>
+        <td>Maps each Cypress pattern to a Tosca primitive: it() → TestCase, POM getter → ModuleAttribute, Commands.add → ActionWord, Scenario → TestCase, cy.fixture → TestConfiguration.</td>
+        <td><span class="tag tag-auto">Agent</span></td>
+        <td>Internal mapping model</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 3</td>
+        <td>Flag Ambiguities</td>
+        <td>Detects cy.intercept/stub (→ manual), if/else (→ Optional Step), cy.each (→ ForEach), dynamic selectors (→ parameterize), count assertions (→ Tosca Script). Presents resolution table to user.</td>
+        <td><span class="tag tag-auto">Agent</span> <span class="tag tag-flag">+ User resolves</span></td>
+        <td>Resolution decisions</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 4</td>
+        <td>Generate Tosca XML</td>
+        <td>Writes TestCases-spec.xml, TestCases-feature.xml, Modules.xml, ActionWords.xml, TestConfigurations.xml into tosca-output/. Produces migration-report.md with accuracy rating per file (High/Medium/Low).</td>
+        <td><span class="tag tag-auto">Agent</span></td>
+        <td>5 XML files + report</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 5</td>
+        <td>Review &amp; Iterate</td>
+        <td>User spot-checks one TestCase. Agent offers to refine selectors, rename elements, reconcile against existing Tosca ActionWord library, or migrate more files.</td>
+        <td><span class="tag tag-manual">User</span> <span class="tag tag-auto">+ Agent</span></td>
+        <td>Refined XML, or next file batch</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, securityLevel: 'loose' });
+
+  function saveHTML() {
+    setTimeout(() => {
+      // Capture full rendered page (including Mermaid SVG already in DOM)
+      const blob = new Blob(
+        ['<!DOCTYPE html>\n' + document.documentElement.outerHTML],
+        { type: 'text/html;charset=utf-8' }
+      );
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'cypress-tosca-agent-flow.html';
+      a.click();
+    }, 800); // slight delay ensures Mermaid has fully rendered
+  }
+</script>
+</body>
+</html>

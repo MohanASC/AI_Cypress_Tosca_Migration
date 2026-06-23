@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cypress → Tosca Migrator — Agent Flow</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6fb;
+      color: #1a1a2e;
+      padding: 32px 24px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0d3b66;
+      letter-spacing: 0.5px;
+    }
+    header p {
+      font-size: 14px;
+      color: #555;
+      margin-top: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: #0d3b66;
+      color: #fff;
+      border-radius: 12px;
+      padding: 3px 12px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    /* ── Legend ────────────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #dde3f0;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+    .dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-blue   { background: #2e86de; }
+    .dot-green  { background: #27ae60; }
+    .dot-orange { background: #e67e22; }
+    .dot-red    { background: #c0392b; }
+    .dot-purple { background: #8e44ad; }
+
+    /* ── Diagram container ──────────────────────────────────────── */
+    .diagram-card {
+      background: #fff;
+      border: 1px solid #dde3f0;
+      border-radius: 14px;
+      padding: 32px 24px;
+      overflow-x: auto;
+      margin-bottom: 36px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .mermaid { min-width: 900px; }
+
+    /* ── Steps table ────────────────────────────────────────────── */
+    .steps-section h2 {
+      font-size: 18px;
+      color: #0d3b66;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #2e86de;
+      padding-bottom: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      background: #0d3b66;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #e8ecf4;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f8f9fd; }
+    tr:hover td { background: #edf2ff; }
+    .step-num {
+      font-weight: 700;
+      color: #2e86de;
+      white-space: nowrap;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      margin: 1px 2px;
+    }
+    .tag-auto    { background: #d4efdf; color: #1a7a3c; }
+    .tag-manual  { background: #fde8d8; color: #a04000; }
+    .tag-flag    { background: #fef9c3; color: #7d6608; }
+
+    /* ── Print button ────────────────────────────────────────────── */
+    .toolbar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: #0d3b66;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 0 6px;
+    }
+    .btn:hover { background: #2e86de; }
+    @media print {
+      .toolbar { display: none; }
+      body { background: #fff; padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Cypress → Tosca Migrator</h1>
+  <p>Agent workflow — from Cypress source files to importable Tosca XML</p>
+  <span class="badge">Accuracy: up to 88% automated coverage</span>
+</header>
+
+<div class="toolbar">
+  <button class="btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  <button class="btn" onclick="saveSvg()">⬇ Save as SVG</button>
+</div>
+
+<!-- ── Legend ─────────────────────────────────────────────── -->
+<div class="legend">
+  <div class="legend-item"><div class="dot dot-blue"></div>Automated (High confidence)</div>
+  <div class="legend-item"><div class="dot dot-green"></div>Output artifacts</div>
+  <div class="legend-item"><div class="dot dot-orange"></div>User decision required</div>
+  <div class="legend-item"><div class="dot dot-red"></div>Manual migration item</div>
+  <div class="legend-item"><div class="dot dot-purple"></div>Platform selection</div>
+</div>
+
+<!-- ── Mermaid diagram ─────────────────────────────────────── -->
+<div class="diagram-card">
+  <div class="mermaid">
+%%{init: {"theme": "base", "themeVariables": {
+  "primaryColor": "#2e86de",
+  "primaryTextColor": "#fff",
+  "primaryBorderColor": "#0d3b66",
+  "lineColor": "#555",
+  "secondaryColor": "#edf2ff",
+  "tertiaryColor": "#f8f9fd",
+  "fontSize": "14px"
+}}}%%
+flowchart TD
+    A([🚀 User Invokes Agent]) --> B
+
+    subgraph STEP0 ["Step 0 — Platform & Config"]
+        B{Target Platform?}
+        B -->|Web / Default| C1[TBox Web\nChrome · Firefox · Edge]
+        B -->|iOS / Android| C2[TBox Mobile\nAccessibilityId · XPath]
+        B -->|SAP / WinForms| C3[TBox SAP · WinForms\nSapPath · AutomationId]
+        B -->|Salesforce| C4[TBox Salesforce\nCSS · SObjectField]
+    end
+
+    C1 & C2 & C3 & C4 --> D
+
+    subgraph STEP1 ["Step 1 — Discover & Inventory"]
+        D[Read All Source Files]
+        D --> D1[📄 Spec files  .cy.ts]
+        D --> D2[📄 POM classes  .ts]
+        D --> D3[📄 commands.ts  custom cmds]
+        D --> D4[📄 Feature files  .feature]
+        D --> D5[📄 Fixtures  .json / .ts]
+        D1 & D2 & D3 & D4 & D5 --> D6[Present Inventory\nto User — Confirm ✅]
+    end
+
+    D6 --> E
+
+    subgraph STEP2 ["Step 2 — Pattern Analysis  🔵 Automated"]
+        E[Analyze Each File Type]
+        E --> E1["it() blocks\n→ TestCases"]
+        E --> E2["POM getters → ModuleAttributes\nPOM methods → TestSteps"]
+        E --> E3["Commands.add()\n→ ActionWords"]
+        E --> E4["Scenarios → TestCases\nGiven/When/Then → TestSteps"]
+        E --> E5["cy.fixture()\n→ TestConfiguration"]
+    end
+
+    E1 & E2 & E3 & E4 & E5 --> F
+
+    subgraph STEP3 ["Step 3 — Flag Ambiguities  🟡 User Decision"]
+        F{Ambiguous\nPatterns Found?}
+        F -->|cy.intercept / cy.stub| G1[🔴 Manual Migration Item\nService Virtualization needed]
+        F -->|if/else conditionals| G2[🟠 Tosca Optional Step\nor precondition]
+        F -->|cy.each loops| G3[🟠 TBox ForEach\nor unroll]
+        F -->|dynamic cy.contains| G4[🟠 Parameterize\nXPath selector]
+        F -->|count assertions| G5[🟠 Tosca Script\nmodule needed]
+        F -->|No ambiguities| H
+        G1 & G2 & G3 & G4 & G5 --> G6{User\nResolves?}
+        G6 -->|Yes — apply fix| H
+        G6 -->|No — keep as manual item| H
+    end
+
+    subgraph STEP4 ["Step 4 — Generate Tosca XML  🟢 Output"]
+        H[Write Output Files]
+        H --> H1[📦 TestCases-spec.xml\nfrom spec files]
+        H --> H2[📦 TestCases-feature.xml\nfrom Gherkin]
+        H --> H3[📦 Modules.xml\nfrom POM classes]
+        H --> H4[📦 ActionWords.xml\nfrom custom commands]
+        H --> H5[📦 TestConfigurations.xml\nfrom fixtures]
+        H --> H6[📋 migration-report.md\nManual items · Accuracy rating]
+    end
+
+    H1 & H2 & H3 & H4 & H5 & H6 --> I
+
+    subgraph STEP5 ["Step 5 — Review & Iterate"]
+        I[Spot-Check\nOne TestCase]
+        I --> J{More Files\nor Refinements?}
+        J -->|More files| D
+        J -->|Refine selectors| E2
+        J -->|Done| K
+    end
+
+    K([✅ Migration Complete\nImport XML into Tosca Commander])
+  </div>
+</div>
+
+<!-- ── Step-by-step table ──────────────────────────────────── -->
+<div class="steps-section">
+  <h2>Step-by-Step Reference</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Step</th>
+        <th>Name</th>
+        <th>What Happens</th>
+        <th>Who Acts</th>
+        <th>Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="step-num">Step 0</td>
+        <td>Platform &amp; Config</td>
+        <td>Agent asks target platform (Web / Mobile / SAP / Salesforce / WinForms) and Tosca version. Sets correct TBox engine and selector technique priority.</td>
+        <td><span class="tag tag-manual">User</span></td>
+        <td>Engine context locked in</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 1</td>
+        <td>Discover &amp; Inventory</td>
+        <td>Reads all .cy.ts spec files, POM .ts classes, commands.ts, .feature files, and fixture files. Builds a complete inventory table for user confirmation.</td>
+        <td><span class="tag tag-auto">Agent</span></td>
+        <td>Inventory list</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 2</td>
+        <td>Pattern Analysis</td>
+        <td>Maps each Cypress pattern to a Tosca primitive: it() → TestCase, POM getter → ModuleAttribute, Commands.add → ActionWord, Scenario → TestCase, cy.fixture → TestConfiguration.</td>
+        <td><span class="tag tag-auto">Agent</span></td>
+        <td>Internal mapping model</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 3</td>
+        <td>Flag Ambiguities</td>
+        <td>Detects cy.intercept/stub (→ manual), if/else (→ Optional Step), cy.each (→ ForEach), dynamic selectors (→ parameterize), count assertions (→ Tosca Script). Presents resolution table to user.</td>
+        <td><span class="tag tag-auto">Agent</span> <span class="tag tag-flag">+ User resolves</span></td>
+        <td>Resolution decisions</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 4</td>
+        <td>Generate Tosca XML</td>
+        <td>Writes TestCases-spec.xml, TestCases-feature.xml, Modules.xml, ActionWords.xml, TestConfigurations.xml into tosca-output/. Produces migration-report.md with accuracy rating per file (High/Medium/Low).</td>
+        <td><span class="tag tag-auto">Agent</span></td>
+        <td>5 XML files + report</td>
+      </tr>
+      <tr>
+        <td class="step-num">Step 5</td>
+        <td>Review &amp; Iterate</td>
+        <td>User spot-checks one TestCase. Agent offers to refine selectors, rename elements, reconcile against existing Tosca ActionWord library, or migrate more files.</td>
+        <td><span class="tag tag-manual">User</span> <span class="tag tag-auto">+ Agent</span></td>
+        <td>Refined XML, or next file batch</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, securityLevel: 'loose' });
+
+  function saveSvg() {
+    setTimeout(() => {
+      const svg = document.querySelector('.mermaid svg');
+      if (!svg) { alert('Diagram not ready yet — try again in a moment.'); return; }
+      const serializer = new XMLSerializer();
+      const svgStr = serializer.serializeToString(svg);
+      const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'cypress-tosca-agent-flow.svg';
+      a.click();
+    }, 500);
+  }
+</script>
+</body>
+</html>

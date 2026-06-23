@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["cypress", "node"],
+    "lib": ["ES2020", "DOM"],
+    "noImplicitAny": false
+  },
+  "include": ["**/*.ts"]
+}

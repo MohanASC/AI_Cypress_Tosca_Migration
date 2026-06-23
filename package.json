@@ -1,0 +1,19 @@
+{
+  "name": "cypress-tosca-migration",
+  "version": "1.0.0",
+  "description": "Centene homepage E2E tests — Cypress to Tosca migration demo",
+  "private": true,
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:spec": "cypress run --spec cypress/e2e/centene-homepage.cy.ts",
+    "cy:run:feature": "cypress run --spec cypress/e2e/centene-homepage.feature"
+  },
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^21.0.2",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5",
+    "cypress": "^13.17.0",
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  }
+}
