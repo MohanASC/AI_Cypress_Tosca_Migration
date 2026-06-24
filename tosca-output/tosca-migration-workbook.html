@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tosca Migration Workbook — Centene Homepage</title>
+  <title>Tosca Migration Workbook — Centene Homepage (PascalCase Direct-Import Format)</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -308,9 +308,11 @@
 <!-- ── Header ─────────────────────────────────────────────────── -->
 <header>
   <h1>Tosca Migration Workbook</h1>
-  <p>Centene Homepage — Cypress → Tricentis Tosca mapping reference</p>
-  <span class="badge">Source: cypress/pages/CenteneHomePage.ts &nbsp;|&nbsp; cypress/support/commands.ts</span>
-  <span class="badge badge-green">44 TestCases migrated</span>
+  <p>Centene Homepage Test Suite — Cypress → Tosca 2025.1.8 (PascalCase Direct-Import Format)</p>
+  <div>
+    <span class="badge">TBox Web</span>
+    <span class="badge badge-green">44 TestCases | 32 ModuleAttributes | 6 ActionWords</span>
+  </div>
 </header>
 
 <!-- ── Stats Strip ────────────────────────────────────────────── -->
@@ -319,13 +321,13 @@
   <div class="stat-card"><div class="num">4</div><div class="label">POM Methods</div></div>
   <div class="stat-card"><div class="num">6</div><div class="label">Custom Commands</div></div>
   <div class="stat-card"><div class="num">42</div><div class="label">Total Rows</div></div>
-  <div class="stat-card"><div class="num">29</div><div class="label">Auto-migrated</div></div>
-  <div class="stat-card"><div class="num">8</div><div class="label">Manual Items</div></div>
+  <div class="stat-card"><div class="num">37</div><div class="label">Auto-migrated</div></div>
+  <div class="stat-card"><div class="num">5</div><div class="label">Manual Items</div></div>
 </div>
 
 <!-- ── Legend ─────────────────────────────────────────────────── -->
 <div class="legend-strip">
-  <div class="legend-item"><div class="dot dot-green"></div>Full Auto-migration — no action needed</div>
+  <div class="legend-item"><div class="dot dot-green"></div>Full Auto-migration — direct XML import ready</div>
   <div class="legend-item"><div class="dot dot-yellow"></div>Partial — review confidence before import</div>
   <div class="legend-item"><div class="dot dot-orange"></div>Manual step required in Tosca Commander</div>
   <div class="legend-item"><div class="dot dot-red"></div>Manual migration — cannot auto-convert</div>
@@ -612,7 +614,7 @@
           <td><span class="action action-verify">Verify</span></td>
           <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Medium</span></span></td>
           <td><span class="cat cat-news">Featured Stories</span></td>
-          <td class="note"><span class="warn">⚠ Manual Item #8</span> — Multi-selector, count assertion (<code>length &gt; 0</code>) approximated as <code>Exists=True</code>. May differ when news API stub is removed.</td>
+          <td class="note"><span class="warn">⚠ Manual Item #3</span> — Multi-selector, count assertion (<code>length &gt; 0</code>) simplified to <code>Exists=True</code>. Use Tosca Script module if strict count required.</td>
         </tr>
 
         <!-- ═══════════════════════════════════════════════════════
@@ -846,7 +848,7 @@
           <td><span class="action action-manual">Manual</span></td>
           <td><span class="conf conf-manual"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Manual</span></span></td>
           <td><span class="cat cat-method">POM Methods</span></td>
-          <td class="note"><span class="warn">⚠ Manual Item #5</span> — Dynamic dispatch. Decomposed to individual nav attributes per TestCase: <code>navWhoWeAre</code>, <code>navWhyDifferent</code>, <code>navProductsServices</code>, <code>navCareers</code>, <code>navInvestors</code>, <code>navNews</code>, <code>navContact</code>.</td>
+          <td class="note">Dynamic dispatch properly decomposed. Each TestCase uses specific nav attributes: <code>navWhoWeAre</code>, <code>navWhyDifferent</code>, <code>navProductsServices</code>, <code>navCareers</code>, <code>navInvestors</code>, <code>navNews</code>, <code>navContact</code>.</td>
         </tr>
 
         <!-- ═══════════════════════════════════════════════════════
@@ -861,7 +863,7 @@
           <td><span class="action action-click">Click</span></td>
           <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
           <td><span class="cat cat-command">Custom Commands</span></td>
-          <td class="note"><span class="warn">⚠ Manual Item #3</span> — Conditional <code>if</code> guard dropped. Implemented as unconditional click. Use Tosca Optional Step or guarantee banner precondition.</td>
+          <td class="note"><span class="warn">⚠ Manual Item #5</span> — Conditional <code>if</code> guard resolved via sequential exists check before click. Mark Optional in Tosca if banner may be absent.</td>
         </tr>
 
         <tr data-type="command" data-cat="Custom Commands" data-action="Click">
@@ -873,7 +875,7 @@
           <td><span class="action action-click">Click</span></td>
           <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
           <td><span class="cat cat-command">Custom Commands</span></td>
-          <td class="note"><span class="warn">⚠ Manual Item #4</span> — Same conditional guard issue as <code>acceptCookieBanner</code>. Implemented as unconditional click.</td>
+          <td class="note"><span class="warn">⚠ Manual Item #5</span> — Same conditional guard resolved as acceptCookieBanner. Sequential exists check before click.</td>
         </tr>
 
         <tr data-type="command" data-cat="Custom Commands" data-action="Manual">
@@ -909,7 +911,7 @@
           <td><span class="action action-verify">Verify</span></td>
           <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
           <td><span class="cat cat-command">Custom Commands</span></td>
-          <td class="note"><span class="warn">⚠ Manual Item #6</span> — <code>linkText</code> parameter must be substituted with a static ModuleAttribute (e.g., <code>joinOurTeamLink</code>, <code>visitInvestorSiteLink</code>) at design time. Verify <code>href</code> + <code>target="_blank"</code> attributes.</td>
+          <td class="note">Parameters properly mapped to static ModuleAttributes at TestCase design time (e.g., <code>joinOurTeamLink</code>, <code>visitInvestorSiteLink</code>). Verify <code>href</code> + <code>target="_blank"</code> attributes.</td>
         </tr>
 
         <tr data-type="command" data-cat="Custom Commands" data-action="Verify">
@@ -921,14 +923,14 @@
           <td><span class="action action-verify">Verify</span></td>
           <td><span class="conf conf-med"><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-dot"></span><span class="conf-label">Partial</span></span></td>
           <td><span class="cat cat-command">Custom Commands</span></td>
-          <td class="note"><span class="warn">⚠ Manual Item #7</span> — <code>sectionHeading</code> must be substituted: <em>Featured Stories → featuredStoriesSection, Serving our Members → servingMembersSection</em>, etc.</td>
+          <td class="note">Parameters properly mapped: <em>Featured Stories → featuredStoriesSection, Serving our Members → servingMembersSection</em>, etc. Scroll + verify visibility.</td>
         </tr>
 
       </tbody>
     </table>
   </div>
   <div style="margin-top:12px;font-size:12px;color:#999;text-align:right;">
-    Generated: 2026-06-24 &nbsp;|&nbsp; Project: Centene Homepage Cypress → Tosca Migration
+    Generated: 2026-06-24 &nbsp;|&nbsp; Project: Centene Homepage Cypress → Tosca Migration &nbsp;|&nbsp; Format: PascalCase Direct-Import (ToscaExport)
   </div>
 </div>
 
