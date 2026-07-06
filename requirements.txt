@@ -1,0 +1,34 @@
+# Python Dependencies for Cypress → Tosca Migration Platform
+
+# Core
+pathlib>=1.0.1
+typing-extensions>=4.7.0
+
+# JSON Schema Validation
+jsonschema>=4.18.0
+
+# Logging
+coloredlogs>=15.0.1
+
+# CLI Arguments
+click>=8.1.6
+
+# For Tosca Commander API (optional - requires Tosca installation)
+# pythonnet>=3.0.1  # Uncomment if using Python.NET for Tosca API
+
+# AST Parsing (optional - for future TypeScript/JavaScript parsing)
+# esprima>=4.0.1  # JavaScript AST parser
+# typed-ast>=1.5.5  # Python AST utilities
+
+# Testing (development)
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Code Quality (development)
+black>=23.7.0
+flake8>=6.0.0
+mypy>=1.4.0
+
+# Documentation (development)
+mkdocs>=1.5.0
+mkdocs-material>=9.1.0

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ToscaObjectModel Version="14.0">
+  <TestCase Name="displays the cookie consent banner on first visit">
+    <TestStep ActionWord="TBox Navigate">
+      <Parameter Name="Control" Value="https://www.centene.com/"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Wait">
+      <Parameter Name="Control" Value="@homepageLoad"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="OBJ001"/>
+      <Parameter Name="Value" Value="visible"/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="OBJ002"/>
+      <Parameter Name="Value" Value="visible"/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="OBJ003"/>
+      <Parameter Name="Value" Value="visible"/>
+    </TestStep>
+  </TestCase>
+  <TestCase Name="dismisses the banner when user accepts cookies">
+    <TestStep ActionWord="TBox Navigate">
+      <Parameter Name="Control" Value="https://www.centene.com/"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Click">
+      <Parameter Name="Control" Value="OBJ002"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="OBJ001"/>
+      <Parameter Name="Value" Value="not.exist"/>
+    </TestStep>
+  </TestCase>
+  <TestCase Name="dismisses the banner when user declines cookies">
+    <TestStep ActionWord="TBox Navigate">
+      <Parameter Name="Control" Value="https://www.centene.com/"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Click">
+      <Parameter Name="Control" Value="OBJ003"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="OBJ001"/>
+      <Parameter Name="Value" Value="not.exist"/>
+    </TestStep>
+  </TestCase>
+  <TestCase Name="displays the Centene logo">
+    <TestStep ActionWord="TBox Navigate">
+      <Parameter Name="Control" Value="https://www.centene.com/"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Click">
+      <Parameter Name="Control" Value="OBJ002"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="OBJ012"/>
+      <Parameter Name="Value" Value="visible"/>
+    </TestStep>
+  </TestCase>
+  <TestCase Name="navigates to Who We Are page">
+    <TestStep ActionWord="TBox Navigate">
+      <Parameter Name="Control" Value="https://www.centene.com/"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Click">
+      <Parameter Name="Control" Value="OBJ002"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Click">
+      <Parameter Name="Control" Value="OBJ005"/>
+      <Parameter Name="Value" Value=""/>
+    </TestStep>
+    <TestStep ActionWord="TBox Verify Attribute">
+      <Parameter Name="Control" Value="Browser.URL"/>
+      <Parameter Name="Value" Value="/who-we-are"/>
+    </TestStep>
+  </TestCase>
+</ToscaObjectModel>

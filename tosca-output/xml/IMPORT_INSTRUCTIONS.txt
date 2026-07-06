@@ -1,0 +1,90 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                  TOSCA XML IMPORT INSTRUCTIONS                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Generation Statistics:
+  ✓ Modules Created: 0
+  ✓ TestCases Created: 5
+  ✓ ActionWords Created: 0
+
+Files Generated:
+  • tosca-output\xml\Modules.xml
+  • tosca-output\xml\TestCases.xml
+
+═══════════════════════════════════════════════════════════════════════════════
+
+HOW TO IMPORT INTO TOSCA COMMANDER:
+
+Step 1: Prepare Import Files
+  1. Ensure Tosca Commander is OPEN
+  2. Navigate to the workspace you want to import into
+  
+Step 2: Import Modules
+  1. In Tosca Commander, go to: PROJECT → Import
+  2. Select: "Import from XML"
+  3. Browse to: Modules.xml
+  4. Choose destination folder: Modules/Migrated/Cypress
+  5. Click "Import"
+  6. Verify: 0 module(s) imported successfully
+
+Step 3: Import TestCases
+  1. Go to: TESTCASES → Import
+  2. Select: "Import from XML"
+  3. Browse to: TestCases.xml
+  4. Choose destination folder: TestCases/Migrated/Cypress
+  5. Click "Import"
+  6. Verify: 5 test case(s) imported successfully
+
+Step 4: Import ActionWords (if applicable)
+  1. Go to: TESTCASES → Import
+  2. Select: "Import from XML"
+  3. Browse to: ActionWords.xml
+  4. Choose destination folder: TestCases/ActionWords
+  5. Click "Import"
+  6. Verify: 0 action word(s) imported successfully
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ALTERNATIVE IMPORT METHOD:
+
+If XML import doesn't work, use Tosca's built-in Excel import:
+
+  1. Open: TOOLS → Import → From Excel
+  2. Use the provided Excel templates in: tosca-output/excel/
+  3. Follow the Tosca Excel Import Wizard
+
+═══════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+
+Issue: "Invalid XML format"
+  → Solution: Check Tosca version compatibility (generated for v14.0+)
+  → Try: TOOLS → Options → Import/Export → Enable "Legacy XML Mode"
+
+Issue: "Module not found"
+  → Solution: Import Modules BEFORE TestCases
+  → TestCases reference Modules, so order matters
+
+Issue: "Duplicate names"
+  → Solution: Rename existing items in Tosca or use "Merge" option during import
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NEXT STEPS AFTER IMPORT:
+
+  1. ✓ Verify all modules appear in: Modules/Migrated/Cypress
+  2. ✓ Verify all test cases appear in: TestCases/Migrated/Cypress
+  3. ✓ Open a test case and verify steps are correct
+  4. ✓ Run a smoke test (1-2 test cases) to verify functionality
+  5. ✓ Address any manual items flagged in validation-report.json
+  6. ✓ Execute full test suite
+
+═══════════════════════════════════════════════════════════════════════════════
+
+For support, refer to:
+  • docs/TOSCA_API_SETUP.md
+  • output/validation-report.json
+  • output/build-report.json
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ToscaObjectModel Version="14.0">
+  <Module Name="Centene Homepage Tests" Engine="TBox Web">
+    <ModuleAttribute Name="cookieBanner" Technique="CSS" Value="[class*=&quot;cookie&quot;]" ControlType="Control"/>
+    <ModuleAttribute Name="cookieAcceptBtn" Technique="XPath" Value="//button[contains(text(),'Accept')]" ControlType="Button"/>
+    <ModuleAttribute Name="cookieDeclineBtn" Technique="XPath" Value="//button[contains(text(),'Decline')]" ControlType="Button"/>
+    <ModuleAttribute Name="skipToMainContent" Technique="XPath" Value="//a[contains(text(),'Skip to Main Content')]" ControlType="Control"/>
+    <ModuleAttribute Name="navWhoWeAre" Technique="XPath" Value="//a[contains(text(),'Who We Are')]" ControlType="Control"/>
+    <ModuleAttribute Name="navWhyDifferent" Technique="XPath" Value="nav a:contains(&quot;Why We're Different&quot;)" ControlType="Control"/>
+    <ModuleAttribute Name="navProductsServices" Technique="XPath" Value="//a[contains(text(),'Products &amp; Services')]" ControlType="Control"/>
+    <ModuleAttribute Name="navCareers" Technique="XPath" Value="//a[contains(text(),'Careers')]" ControlType="Control"/>
+    <ModuleAttribute Name="navInvestors" Technique="XPath" Value="//a[contains(text(),'Investors')]" ControlType="Control"/>
+    <ModuleAttribute Name="navNews" Technique="XPath" Value="//a[contains(text(),'News')]" ControlType="Control"/>
+    <ModuleAttribute Name="navContact" Technique="XPath" Value="//a[contains(text(),'CONTACT')]" ControlType="Control"/>
+    <ModuleAttribute Name="logo" Technique="CSS" Value="a[href=&quot;/&quot;]" ControlType="Control"/>
+    <ModuleAttribute Name="heroHeading" Technique="XPath" Value="//*[contains(text(),'This is Centene')]" ControlType="Control"/>
+    <ModuleAttribute Name="heroTagline" Technique="XPath" Value="//*[contains(text(),'Transforming the health of the communities we serve')]" ControlType="Control"/>
+    <ModuleAttribute Name="whoWeAreLink" Technique="XPath" Value="//a[contains(text(),'Who We Are &gt;')]" ControlType="Link"/>
+    <ModuleAttribute Name="featuredStoriesSection" Technique="XPath" Value="//*[contains(text(),'Featured Stories')]" ControlType="Control"/>
+    <ModuleAttribute Name="viewAllNewsLink" Technique="XPath" Value="//a[contains(text(),'View All News &gt;')]" ControlType="Link"/>
+    <ModuleAttribute Name="newsArticles" Technique="CSS" Value="[class*=&quot;news&quot;] a, [class*=&quot;story&quot;] a" ControlType="Control"/>
+    <ModuleAttribute Name="servingMembersSection" Technique="XPath" Value="//*[contains(text(),'Serving our Members')]" ControlType="Control"/>
+    <ModuleAttribute Name="productsServicesLink" Technique="XPath" Value="//a[contains(text(),'Products &amp; Services &gt;')]" ControlType="Link"/>
+    <ModuleAttribute Name="careersSection" Technique="XPath" Value="//*[contains(text(),'Careers')]" ControlType="Control"/>
+    <ModuleAttribute Name="joinOurTeamLink" Technique="XPath" Value="//a[contains(text(),'Join our Team')]" ControlType="Link"/>
+    <ModuleAttribute Name="investorSection" Technique="XPath" Value="//*[contains(text(),'Centene Investor Relations')]" ControlType="Control"/>
+    <ModuleAttribute Name="visitInvestorSiteLink" Technique="XPath" Value="//a[contains(text(),'Visit Investor Site')]" ControlType="Link"/>
+    <ModuleAttribute Name="linkedInLink" Technique="CSS" Value="a[href*=&quot;linkedin.com/company/centene&quot;]" ControlType="Link"/>
+    <ModuleAttribute Name="facebookLink" Technique="CSS" Value="a[href*=&quot;facebook.com/CenteneCorporation&quot;]" ControlType="Link"/>
+    <ModuleAttribute Name="twitterLink" Technique="CSS" Value="a[href*=&quot;x.com/Centene&quot;]" ControlType="Link"/>
+    <ModuleAttribute Name="youtubeLink" Technique="CSS" Value="a[href*=&quot;youtube.com/user/CenteneCorp&quot;]" ControlType="Link"/>
+    <ModuleAttribute Name="footerPrivacyPolicy" Technique="XPath" Value="//a[contains(text(),'PRIVACY POLICY')]" ControlType="Control"/>
+    <ModuleAttribute Name="footerTerms" Technique="XPath" Value="//a[contains(text(),'TERMS &amp; CONDITIONS')]" ControlType="Control"/>
+    <ModuleAttribute Name="footerAccessibility" Technique="XPath" Value="//a[contains(text(),'ACCESSIBILITY')]" ControlType="Control"/>
+    <ModuleAttribute Name="footerCopyright" Technique="XPath" Value="//*[contains(text(),'© Copyright 2026 Centene Corporation')]" ControlType="Control"/>
+  </Module>
+</ToscaObjectModel>
